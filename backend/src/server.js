@@ -1,21 +1,41 @@
-const express = require('express')
-const routes = require('./routes')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const path = require('path')
+const express = require("express");
+const routes = require("./routes");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const path = require("path");
 
+const socketio = require("socket.io");
+const http = require("http");
 
-const app = express()
+const app = express();
+const server = http.Server(app);
+const io = socketio(server);
 
-mongoose.connect('mongodb+srv://aircnc:aircnc@cluster0-2wxw0.mongodb.net/aircnc?retryWrites=true&w=majority', {
-    useNewUrlParser : true,
+mongoose.connect(
+  "mongodb+srv://aircnc:aircnc@cluster0-2wxw0.mongodb.net/aircnc?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
     useUnifiedTopology: true
-})
+  }
+);
 
-app.use(cors())
-app.use(express.json())
-app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads')))
+const connectedUsers = {};
 
-app.use(routes)
+io.on("connection", socket => {
+  const { user_id } = socket.handshake.query;
+  connectedUsers[user_id] = socket.id;
+});
 
-app.listen(3333)
+app.use((req, res, next) => {
+  req.io = io;
+  req.connectedUsers = connectedUsers;
+  return next();
+});
+
+app.use(cors());
+app.use(express.json());
+app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
+
+app.use(routes);
+
+server.listen(3333);
