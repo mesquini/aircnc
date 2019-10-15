@@ -7,7 +7,8 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
+  Alert
 } from "react-native";
 
 import api from "../services/api";
@@ -24,14 +25,20 @@ export default function Login({ navigation }) {
   }, []);
 
   async function handleSubmit() {
-    const { data } = await api.post("/session", {
-      email
-    });
-    const { _id } = data;
-    await AsyncStorage.setItem("userId", _id);
-    await AsyncStorage.setItem("techs", techs);
-
-    navigation.navigate("List");
+    if(!email)
+      Alert.alert('Email é obrigatorio!')
+    else if(!techs)
+      Alert.alert('Entre com alguma tecnologia!')  
+    else{
+      const { data } = await api.post("/session", {
+        email
+      });
+      const { _id } = data;
+      await AsyncStorage.setItem("userId", _id);
+      await AsyncStorage.setItem("techs", techs);
+  
+      navigation.navigate("List");
+    }  
   }
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">

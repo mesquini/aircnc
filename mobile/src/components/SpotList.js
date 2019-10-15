@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { withNavigation, NavigationEvents } from 'react-navigation'
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
+import { withNavigation, NavigationEvents } from "react-navigation";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  SafeAreaView
+} from "react-native";
 
 import api from "../services/api";
 
@@ -17,8 +25,8 @@ function SpotList({ tech, navigation }) {
     loadSpots();
   }, []);
 
-  function handleNavigate(id){
-    navigation.navigate('Booking', {id})
+  function handleNavigate(id) {
+    navigation.navigate("Booking", { id });
   }
 
   return (
@@ -32,15 +40,23 @@ function SpotList({ tech, navigation }) {
         keyExtractor={item => item._id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({item}) => (
-            <View style={styles.listItem}>
-                <Image style={styles.thumbnail} source={{uri: item.thumbnail_url}} />
-                <Text style={styles.company}>{item.company}</Text>
-                <Text style={styles.price}>{item.price ? `R$${item.price}` : 'GRATUITO'}</Text>
-                <TouchableOpacity onPress={() => handleNavigate(item._id)} style={styles.button}>
-                    <Text style={styles.txtBtn}>Solicitar reserva</Text>
-                </TouchableOpacity>
-            </View>
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Image
+              style={styles.thumbnail}
+              source={{ uri: item.thumbnail_url }}
+            />
+            <Text style={styles.company}>{item.company}</Text>
+            <Text style={styles.price}>
+              {item.price ? `R$${item.price}` : "GRATUITO"}
+            </Text>
+            <TouchableOpacity
+              onPress={() => handleNavigate(item._id)}
+              style={styles.button}
+            >
+              <Text style={styles.txtBtn}>Solicitar reserva</Text>
+            </TouchableOpacity>
+          </View>
         )}
       />
     </View>
@@ -49,7 +65,7 @@ function SpotList({ tech, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30
+    marginBottom: 25,
   },
   title: {
     fontSize: 20,
@@ -61,28 +77,29 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   list: {
-      paddingHorizontal: 20
+    paddingHorizontal: 20
   },
-  listItem : {
-      marginRight: 15
+  listItem: {
+    marginRight: 25,
   },
   thumbnail: {
-      width: 200,
-      height: 120, 
-      resizeMode: 'cover',
-      borderRadius:2,
+    width: 200,
+    height: 120,
+    resizeMode: "cover",
+    borderRadius: 2,
+    paddingHorizontal: 20
   },
   company: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: '#333',
-      marginTop: 10
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginTop: 10
   },
 
   price: {
-      fontSize: 15,
-      color: '#999',
-      marginTop: 5
+    fontSize: 15,
+    color: "#999",
+    marginTop: 5
   },
   button: {
     height: 32,
@@ -97,7 +114,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15
   }
-
 });
 
-export default withNavigation(SpotList)
+export default withNavigation(SpotList);
